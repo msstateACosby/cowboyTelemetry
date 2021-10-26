@@ -6,10 +6,11 @@ class DataEntry:
     def getSize(self):
         return len(self.values)
 class TelemetryDataType:
-    def __init__(self, name, valueNames):
+    def __init__(self, name, units, valueNames):
         self.name = name
         self.size = len(valueNames)
         self.entries = {}
+        self.units = units
         self.valueNames = {k:v for v, k in enumerate(valueNames)}
 
 
