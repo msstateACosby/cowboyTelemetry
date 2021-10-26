@@ -1,7 +1,7 @@
 class DataEntry:
     def __init__(self, timeStamp, values):
-        self.timeStamp = timeStamp
-        self.values = values
+        self.timeStamp = float(timeStamp)
+        self.values = [float(value) for value in values]
 
     def getSize(self):
         return len(self.values)
