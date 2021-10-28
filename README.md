@@ -10,6 +10,8 @@ Software depencies:
 Hardware depencies:
 - Arduino (Uno for now)
 
+# reciever
+A simple arduino device that is similar to the onboardTelemetry program but just takes the radio data and sends over serial to the computer
 
 # viewer
 A python program that takes data given by the onboardTelemetry (right now in the form of reading some files produced by the onboardTelemetry program).
@@ -21,11 +23,19 @@ Software depencies
 #A few notes:
 Prelimary data file design:
 Two files:
-First contains flight metadata.
+First data type definitions.
 Second contains data samples collected during flight.
-Both adhere to this format per line
-\<TypeOfDataEntry\> \<entryA\> \<entryB\> \<entryC\> ...
+They are similar in format
+Data type files are like: 
+\<TypeOfDataEntry\> \<Units\> \<entryA\> \<entryB\> \<entryC\> ...
 
-It is up to the viewer to correctly interpret the files as the amount of entries could vary between different types (but probably not between the two files)
+While the data time series follows the format:
+\<TypeOfDataEntry\> \<Time\> \<entryA\> \<entryB\> \<entryC\> ...
 
+Note: the number of entries can be any nonzero amount as long as the each time series entry has the same amount of entries as the type definition
+
+Current Plans:
+Allow data type and values to be in the same file so that it is easier to dynamically load information
+
+Add stats information
 
