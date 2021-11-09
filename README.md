@@ -38,8 +38,3 @@ Current Plans:
 Allow data type and values to be in the same file so that it is easier to dynamically load information
 
 Add stats information
-
-hello my name is emily
-
-SUp im quin
-
