@@ -4,12 +4,12 @@ While the antenna obviously isn't a piece of code to work on, it would still be 
 ## Questions
 We have some questions for Dr. Green about antenna design listed here. Some background clarification will be listed below.
 - How do we design a better antenna?
-  - How much flexibility is there with a fixed 915 Mhz frequency?
+  - How much flexibility of design can we achieve with a fixed 915 Mhz frequency?
     - Can we make it longer / does that help?
     - Can we change the shape / does that help?
   - Can we make the rocket antenna somewhat directional (i.e not send signals into the middle of the rocket were that energy will just be lost)?
   - How much does having a directional ground antenna help?
-  - Would it possible and worthwile to amplify the signal?
+  - Would it be possible and worthwile to amplify the signal?
 
 - Other radio module options if nothing would work for this?
 
