@@ -1,5 +1,5 @@
 # Antenna / Radio Module 
-While the antenna obviously isn't a piece of code to work, it would still be a good idea to keep a written record of our thoughts.
+While the antenna obviously isn't a piece of code to work on, it would still be a good idea to keep a written record of our thoughts.
 
 ## Questions
 We have some questions for Dr. Green about antenna design listed here. Some background clarification will be listed below.
