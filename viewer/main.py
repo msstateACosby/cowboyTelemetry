@@ -63,6 +63,7 @@ class TelemetryViewerApp(tk.Tk):
 
 class MainPage(ttk.Frame):
     def __init__(self, parent, controller):
+        self.frames = {}
         ttk.Frame.__init__(self, parent)
         label = ttk.Label(self, text="Choose data series:", font=SMALL_FONT)
         label.grid(row = 0, column = 0)

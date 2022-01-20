@@ -14,3 +14,8 @@ We have some questions for Dr. Green about antenna design listed here. Some back
 - Other radio module options if nothing would work for this?
 
 Essentially our problem is that our radio module product page only promises 2km under ideal conditions while we would like to achieve ideally probably something like 10k. They did say that has been achieved, but under very ideal conditions and directional antennas.
+
+# Current Knowledge
+It appears that we will not have much flexibility on our antenna, as the 915 MHz frequency is regulated and made to be low power so that licenses are not required. We could get a directional antenna for the ground, which should help. Dr. Green suggested an antenna, and we could potentially put 2 into a rocket to increase the power, but unless the rocket is designed for them, they might not work (both are longer than a  foot). 
+
+I did find a formula for the data rate with is that the theoretical rate in bits per second R is roughly equal to F*log2(1+P/N) where F is the frequency, P is the power of the signal, and N is the noise in system at the frequence. No idea what expected noise is though.
