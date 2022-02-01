@@ -16,4 +16,7 @@ In order to achieve this goal, parts were order that could implement a radio sys
 
 - Micro SD Breakout Board - A board to store the SD card.
 
+- Lithium Ion Battery - pretty standard batteries that inferace directly with the feather make powering fairly easy.
+
+One still might wonder how discovery of these modules was made, and the simple but true explanation is a familiarity with Adafruit's products that lead to quickly being able to identify appropriate electronics. If unsure, spend time scouring adafruit (or digikey or others) and at least gain cursory understanding of the choices.
 Some programming was started before as well, but not much more than the most basic of concepts.
