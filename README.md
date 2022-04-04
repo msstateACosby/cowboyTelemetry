@@ -4,11 +4,15 @@ A custom telemetry system for the MSU rocketry team. There are two main parts of
 Uses an arduino (or related) to grab data from sensors and possibly other components on the rocket and organize them to be used by the ground telemetry system.
 The initial system will likely simply output to a file.
 
-Software depencies:
+Software dependencies:
 - Arduino IDE
+- RadioHead arduino library
+- Adafruit ICM20948 library
 
-Hardware depencies:
-- Arduino (Uno for now)
+Major Hardware dependencies:
+- M0 Microprocessor (feather)
+- RF95 LoRa radio (feather)
+- ICM20948 9-dof IMU
 
 # reciever
 A simple arduino device that is similar to the onboardTelemetry program but just takes the radio data and sends over serial to the computer
