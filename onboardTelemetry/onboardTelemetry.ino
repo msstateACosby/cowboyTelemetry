@@ -22,15 +22,15 @@ uint16_t measurement_delay_us = 65535;
 //global variables
 RH_RF95 rf95(RFM95_CS, RFM95_INT);
 File logfile;
-
-void sendData(char* data, int datalen)
+int currentTime;
+void sendData(const char* data, int datalen)
 {
   digitalWrite(LEDPIN, HIGH);
   delay(10);
   digitalWrite(LEDPIN, LOW);
   // put your main code here, to run repeatedly:
   Serial.println("Transmitting");
-  data[datalen-1] = 0;
+  
   rf95.send((uint8_t *)data, datalen);
   rf95.waitPacketSent();
   uint8_t buf[RH_RF95_MAX_MESSAGE_LEN];
@@ -54,6 +54,7 @@ void sendData(char* data, int datalen)
   {
     Serial.println("No reply, is there a listener around?");
   }
+  
 }
 
 void setup() {
@@ -104,18 +105,32 @@ void loop() {
   sensors_event_t temp;
   icm.getEvent(&accel, &gyro, &temp, &mag);
 
+  currentTime = millis();
+  String data;
   
-  char data[40];
-  Serial.print("\t\tAccel X: ");
-  Serial.print(accel.acceleration.x);
-  Serial.print(" \tY: ");
-  Serial.print(accel.acceleration.y);
-  Serial.print(" \tZ: ");
-  Serial.print(accel.acceleration.z);
-  Serial.println(" m/s^2 ");
-  sprintf(data, "Accel X: %f, Accel Y: %f, Accel Z: %f", 2.0f, accel.acceleration.y, accel.acceleration.z);
-  Serial.println(data);
+  //sprintf(data, "Accel X: %f, Accel Y: %f, Accel Z: %f", 2.0f, accel.acceleration.y, accel.acceleration.z);
+  data = "Accel "+ String(currentTime) +" "+ String(accel.acceleration.x)
+      + " " + String(accel.acceleration.y)
+      + " " + String(accel.acceleration.z) + "\0";
+  Serial.println(data.c_str());
+  sendData(data.c_str(), data.length());
+
+  data = "Gryo " + String(currentTime) + " " +String(gyro.gyro.x)
+      + " " + String(gyro.gyro.y)
+      + " " + String(gyro.gyro.z);
+  Serial.println(data.c_str());
+  sendData(data.c_str(), data.length());
+
+  data = "Magne "+ String(currentTime) +" "+ String(mag.magnetic.x)
+      + " " + String(mag.magnetic.y)
+      + " " + String(mag.magnetic.z) + "\0";
+  Serial.println(data.c_str());
+  sendData(data.c_str(), data.length());
+
+  data = "Temp " + String(currentTime) + " " +String(temp.temperature) + "\0";
+  Serial.println(data.c_str());
+  sendData(data.c_str(), data.length());
   
-  sendData(data, 30);
+  
   
 }
