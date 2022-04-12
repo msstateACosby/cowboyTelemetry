@@ -50,6 +50,7 @@ Adafruit_SH1107 display = Adafruit_SH1107(64, 128, &Wire);
 //global variables
 RH_RF95 rf95(RFM95_CS, RFM95_INT);
 char recieveChars[RH_RF95_MAX_MESSAGE_LEN];
+
 File logfile;
 unsigned long timer;
 unsigned long currentTime;
@@ -58,105 +59,17 @@ String magString;
 String gyroString;
 String tempString;
 
-bool returnvalue(int *returnLen){
-  
-  if(rf95.available()){
-    
-    uint8_t buf[RH_RF95_MAX_MESSAGE_LEN];
-    uint8_t len = sizeof(buf);
-
-    if (rf95.recv(buf, &len))
-    {
-      digitalWrite(LEDPIN, HIGH);
-      //RH_RF95::printBuffer("Received: ", buf, len);
-      //Serial.print("Got: ");
-      //Serial.println((char*)buf);
-       //Serial.print("RSSI: ");
-      //Serial.println(rf95.lastRssi(), DEC);
-
-      // Send a reply
-      uint8_t data[] = "And hello back to you";
-      rf95.send(data, sizeof(data));
-      rf95.waitPacketSent();
-      //Serial.println("Sent a reply");
-      digitalWrite(LEDPIN, LOW);
-      memcpy(recieveChars, buf, sizeof(char) * RH_RF95_MAX_MESSAGE_LEN);
-      *returnLen = len;
-      return true;
-      }
-    else
-    {
-       Serial.println("Receive failed");
-    }
-  }
-  return false;
-}
-
-bool check_for_SDcard(){
-    if (!SD.begin(cardSelect))
-  {
-    Serial.println("Card init failed");
-    return false;
-  }
-  else{
-    return true;
-  }
-}
-
-void check_for_radioModule(){
-  while (!rf95.init()) 
-  {
-      Serial.println("LoRa radio init failed");
-      while (1);
-  }
-
-  if (!rf95.setFrequency(RF95_FREQ)) {
-      Serial.println("setFrequency failed");
-      while (1);
-  }
-  rf95.setTxPower(23, false);
-
-}
-
-void store_dataSD(){
-  if (
-}
+bool returnvalue(int *returnLen);
+bool check_for_SDcard();
+void check_for_radioModule();
+void screenPrint();
+void store_dataSD();
+void error(uint8_t errno);
+void SDcard_exists();
 
 
-void screenPrint(){
-  //start
 
-  Serial.println("128x64 OLED Start");
-  delay(250); // wait for the OLED to power up
-  display.begin(0x3C, true); // Address 0x3C default
 
-  Serial.println("OLED begun");
-
-  // Show image buffer on the display hardware.
-  // Since the buffer is intialized with an Adafruit splashscreen
-  // internally, this will display the splashscreen.
-  display.display();
-  delay(1000);
-
-  // Clear the buffer.
-  display.clearDisplay();
-  display.display();
-
-  display.setRotation(1);
-  Serial.println("Button test");
-
-  pinMode(BUTTON_A, INPUT_PULLUP);
-  pinMode(BUTTON_C, INPUT_PULLUP);
-
-  // text display tests
-  display.setTextSize(1);
-  display.setTextColor(SH110X_WHITE);
-  display.setCursor(0,0);
-  
-  display.display(); // actually display all of the above
-  //finish
-
-}
 
 void setup() {
   // put your setup code here, to run once:
@@ -174,6 +87,13 @@ void setup() {
   screenPrint();
 
   currentTime = millis();
+
+  if (check_for_SDcard()){
+    store_dataSD();
+  }
+
+  SDcard_exists();
+
 }
 
 void loop() {
@@ -215,6 +135,147 @@ void loop() {
    display.display();
    delay(5);
   }
+}
 
+bool returnvalue(int *returnLen){
   
+  if(rf95.available()){
+    
+    uint8_t buf[RH_RF95_MAX_MESSAGE_LEN];
+    uint8_t len = sizeof(buf);
+
+    if (rf95.recv(buf, &len))
+    {
+      digitalWrite(LEDPIN, HIGH);
+      //RH_RF95::printBuffer("Received: ", buf, len);
+      //Serial.print("Got: ");
+      //Serial.println((char*)buf);
+       //Serial.print("RSSI: ");
+      //Serial.println(rf95.lastRssi(), DEC);
+
+      // Send a reply
+      uint8_t data[] = "And hello back to you";
+      rf95.send(data, sizeof(data));
+      rf95.waitPacketSent();
+      //Serial.println("Sent a reply");
+      digitalWrite(LEDPIN, LOW);
+      memcpy(recieveChars, buf, sizeof(char) * RH_RF95_MAX_MESSAGE_LEN);
+      *returnLen = len;
+      return true;
+      }
+    else
+    {
+       Serial.println("Receive failed");
+    }
+  }
+  return false;
+}
+
+bool check_for_SDcard(){
+    if (!SD.begin(cardSelect))
+  {
+    Serial.println("Card init failed");
+    return false;
+  }
+  
+  else{
+    return true;
+  }
+}
+
+void SDcard_exists(){
+  char filename[15];
+  strcpy(filename, "/ANALOG00.TXT");
+  for (uint8_t i = 0; i < 100; i++) {
+    filename[7] = '0' + i/10;
+    filename[8] = '0' + i%10;
+    // create if does not exist, do not open existing, write, sync after write
+    if (! SD.exists(filename)) {
+      break;
+    }
+  }
+   logfile = SD.open(filename, FILE_WRITE);
+  if( ! logfile ) {
+    Serial.print("Couldnt create "); 
+    Serial.println(filename);
+    error(3);
+  }
+  Serial.print("Writing to "); 
+  Serial.println(filename);
+
+  pinMode(13, OUTPUT);
+  pinMode(8, OUTPUT);
+  Serial.println("Ready!");
+  
+}
+  
+
+
+void check_for_radioModule(){
+  while (!rf95.init()) 
+  {
+      Serial.println("LoRa radio init failed");
+      while (1);
+  }
+
+  if (!rf95.setFrequency(RF95_FREQ)) {
+      Serial.println("setFrequency failed");
+      while (1);
+  }
+  rf95.setTxPower(23, false);
+
+}
+
+void screenPrint(){
+  //start
+
+  Serial.println("128x64 OLED Start");
+  delay(250); // wait for the OLED to power up
+  display.begin(0x3C, true); // Address 0x3C default
+
+  Serial.println("OLED begun");
+
+  // Show image buffer on the display hardware.
+  // Since the buffer is intialized with an Adafruit splashscreen
+  // internally, this will display the splashscreen.
+  display.display();
+  delay(1000);
+
+  // Clear the buffer.
+  display.clearDisplay();
+  display.display();
+
+  display.setRotation(1);
+  Serial.println("Button test");
+
+  pinMode(BUTTON_A, INPUT_PULLUP);
+  pinMode(BUTTON_C, INPUT_PULLUP);
+
+  // text display tests
+  display.setTextSize(1);
+  display.setTextColor(SH110X_WHITE);
+  display.setCursor(0,0);
+  
+  display.display(); // actually display all of the above
+  //finish
+
+}
+
+void store_dataSD(){
+  logfile.println(recieveChars);
+}
+
+void error(uint8_t errno) {
+  while(1) {
+    uint8_t i;
+    for (i=0; i<errno; i++) {
+      digitalWrite(13, HIGH);
+      delay(100);
+      digitalWrite(13, LOW);
+      delay(100);
+    }
+    for (i=errno; i<10; i++) {
+      delay(200);
+    }
+  }
 }
